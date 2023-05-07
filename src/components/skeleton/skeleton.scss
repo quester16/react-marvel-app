@@ -1,0 +1,14 @@
+.card__header{
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 30px;
+    .img{
+        flex: 0 1 60px;
+    }
+    .desc{
+        flex: 1;
+    }
+}
+.card__wrapper{
+    width: 320px;
+}
