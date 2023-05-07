@@ -1,60 +1,51 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './charList.scss'
 
 
-class CharList extends Component {
+const CharList = (props) => {
 
-
-  addClass = (e) => {
+  const addClass = (e) => {
     let target = e.target.closest('.character-card')
     target.classList.add('active')
     setTimeout(() => {
       target.classList.remove('active')
     }, 200);
     
-    this.props.selectedChar(target.dataset.key)
+    props.selectedChar(target.dataset.key)
   }
 
-  charCards = () => {
-    const data = Array.from(this.props.data)
-    const char = data.map(({name, thumbnail, id}) => {
-      return (
-        <div className="character-card" key={id} data-key={id} onClick={this.addClass} >
-          <div className="character-card__img">
-            <img src={`${thumbnail}`} alt="placeholder" />
+  const CharCards = () => {
+    const data = Array.from(props.data)
+
+    return data.map(({name, thumbnail, id}) => {
+        return (
+          <div className="character-card" key={id} data-key={id} onClick={addClass} >
+            <div className="character-card__img">
+              <img src={`${thumbnail}`} alt="placeholder" />
+            </div>
+            <div className="character-card__name">
+              {name}
+            </div>
           </div>
-          <div className="character-card__name">
-            {name}
-          </div>
-        </div>
-      )
-    })
-    return char
-  }
+        )
+      })
+  };
 
-  onCharLoading = () => {
-    this.props.onNewCharLoading()
 
-   
-  }
-
-  render(){
-    const {newItemLoading, charEnded} = this.props
-    console.log(charEnded);
-    return (
-      <div className="layout__grid">
-        {<this.charCards/>}
-        <button 
-          className="more btn" 
-          onClick={this.onCharLoading}
-          style={{display: charEnded ? 'none' : 'block'}}
-          disabled={newItemLoading}>Load more</button>
-      </div>
-    );
-  }
+  const {newItemLoading, onNewCharLoading, charEnded} = props;
+  return (
+    <div className="layout__grid">
+      {<CharCards/>}
+      <button
+        className="more btn"
+        onClick={onNewCharLoading}
+        style={{display: charEnded ? 'none' : 'block'}}
+        disabled={newItemLoading}>Load more</button>
+    </div>
+  );
 }
 
-
+// just for checking
 export default CharList;
 
 

@@ -4,7 +4,6 @@ import RandomChar from '../randomChar/randomChar'
 
 function App() {
 
-
   return (
     <div className="wrapper">
       <div className="bg">

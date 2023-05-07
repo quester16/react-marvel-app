@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import {useEffect, useState} from 'react';
 import './character.scss'
 
 import CharInfo from "./charInfo/charInfo";
@@ -9,47 +9,46 @@ import MarvelService from "../../services/marvelService";
 import Spinner from '../spiner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
-class Character extends Component {
-  
-  state = {
-    heroes : [],
-    heroId : null,
-    loading: true,
-    error: false,
-    newItemLoading: false,
-    offset: 210,
-    charEnded: false
-  }
-  
-  marvelService = new MarvelService()
-  
-  componentDidMount(){
-    this.onRequest()
-  }
+const Character = () => {
 
-  onRequest = (offset) => {
-    this.onNewItemLoaded()
-    this.marvelService
+  const [heroes, setHeroes] = useState([])
+  const [heroId, setHeroId] = useState(null)
+  const [newItemLoading, setNewItemLoading] = useState(false)
+  const [offset, setOffset] = useState(210)
+  const [charEnded, setCharEnded] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+
+
+  
+  const marvelService = new MarvelService()
+
+  useEffect(() => {
+    onRequest()
+  }, [])
+
+
+  const onRequest = (offset) => {
+    onNewItemLoaded()
+    marvelService
       .getAllCharacters(offset)
-      .then(this.onCharLoad)
-      .catch(this.onError)
+      .then(onCharLoad)
+      .catch(onError)
   }
 
-  onNewItemLoaded = () => {
-    this.setState({
-      newItemLoading: true
-    })
+  const onNewItemLoaded = () => {
+    setNewItemLoading(true)
+
   }
 
-  onError = () => {
-    this.setState({
-      loading: false,
-      error: true
-    })
+  const onError = () => {
+    setError(true)
+    setLoading(false)
   }
 
-  onCharLoad = (heros) => {
-    const newCharsId = heros.data.results.map(item => {
+  const onCharLoad = (heroes) => {
+    const newCharsId = heroes.data.results.map(item => {
       return {
         name: item.name,
         thumbnail: item.thumbnail.path + '.' + item.thumbnail.extension,
@@ -61,63 +60,54 @@ class Character extends Component {
     if(newCharsId.length < 9){
       ended = true
     }
-    this.setState(({offset, heroes}) => ({
-      heroes: [...heroes, ...newCharsId],
-      loading: false,
-      error: false,
-      newItemLoading: false,
-      offset: offset + 9,
-      charEnded: ended
-    }))
-    
+
+    setHeroes(heroes => [...heroes, ...newCharsId])
+    setLoading(false)
+    setError(false)
+    setNewItemLoading(false)
+    setOffset(offset => offset + 9)
+    setCharEnded(ended)
+
   };
 
-  selectedChar = (id) => {
-    this.setState({
-      heroId: id
-    })
-
+  const selectedChar = (id) => {
+    setHeroId(id)
     
     window.scrollTo({
       top: 350,
       behavior: 'smooth'
     })
-    console.log('450')
   }
 
-  onNewCharLoading = () => {
-    this.onRequest(this.state.offset)
+  const onNewCharLoading = () => {
+    onRequest(offset)
 
-    window.scrollBy(-450)
   }
 
-  render(){
 
-    const { heroes, loading, error, heroId, newItemLoading, charEnded } = this.state;
 
-    const errorMessage = error ? <ErrorMessage /> : null
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || errorMessage) ? 
-      <CharList 
-      newItemLoading={newItemLoading} 
-      onNewCharLoading={this.onNewCharLoading} 
-      data={heroes} 
-      charEnded={charEnded}
-      selectedChar={this.selectedChar} /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null
+  const spinner = loading ? <Spinner /> : null;
+  const content = !(loading || errorMessage) ?
+    <CharList
+    newItemLoading={newItemLoading}
+    onNewCharLoading={onNewCharLoading}
+    data={heroes}
+    charEnded={charEnded}
+    selectedChar={selectedChar} /> : null;
 
-    return (
-      <section className="character__layout layout">
-        <ErrorBoundary>
-          {errorMessage}
-          {spinner}
-          {content}
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <CharInfo heroId={heroId}/>
-        </ErrorBoundary>
-      </section>
-    );
-  }
+  return (
+    <section className="character__layout layout">
+      <ErrorBoundary>
+        {errorMessage}
+        {spinner}
+        {content}
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <CharInfo heroId={heroId}/>
+      </ErrorBoundary>
+    </section>
+  );
 }
 
 export default Character;
