@@ -1,4 +1,3 @@
-import React from 'react';
 import './charList.scss'
 
 
@@ -45,7 +44,6 @@ const CharList = (props) => {
   );
 }
 
-// just for checking
 export default CharList;
 
 

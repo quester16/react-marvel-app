@@ -1,11 +1,10 @@
 import {useEffect, useState} from 'react';
-import './character.scss'
 
 import CharInfo from "./charInfo/charInfo";
 import CharList from "./charList/charList";
 import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 
-import MarvelService from "../../services/marvelService";
+import useMarvelService from "../../services/marvelService";
 import Spinner from '../spiner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -16,36 +15,20 @@ const Character = () => {
   const [newItemLoading, setNewItemLoading] = useState(false)
   const [offset, setOffset] = useState(210)
   const [charEnded, setCharEnded] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-
-
   
-  const marvelService = new MarvelService()
+  const {loading, error, getAllCharacters} = useMarvelService()
 
   useEffect(() => {
-    onRequest()
+    onRequest(offset, true)
   }, [])
 
 
-  const onRequest = (offset) => {
-    onNewItemLoaded()
-    marvelService
-      .getAllCharacters(offset)
+  const onRequest = (offset, initial) => {
+    initial ? setNewItemLoading(false) : setNewItemLoading(true)
+    getAllCharacters(offset)
       .then(onCharLoad)
-      .catch(onError)
   }
 
-  const onNewItemLoaded = () => {
-    setNewItemLoading(true)
-
-  }
-
-  const onError = () => {
-    setError(true)
-    setLoading(false)
-  }
 
   const onCharLoad = (heroes) => {
     const newCharsId = heroes.data.results.map(item => {
@@ -62,8 +45,6 @@ const Character = () => {
     }
 
     setHeroes(heroes => [...heroes, ...newCharsId])
-    setLoading(false)
-    setError(false)
     setNewItemLoading(false)
     setOffset(offset => offset + 9)
     setCharEnded(ended)
@@ -81,27 +62,26 @@ const Character = () => {
 
   const onNewCharLoading = () => {
     onRequest(offset)
-
   }
 
 
-
   const errorMessage = error ? <ErrorMessage /> : null
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || errorMessage) ?
-    <CharList
-    newItemLoading={newItemLoading}
-    onNewCharLoading={onNewCharLoading}
-    data={heroes}
-    charEnded={charEnded}
-    selectedChar={selectedChar} /> : null;
+  const spinner = loading && !newItemLoading ? <Spinner /> : null;
+
 
   return (
     <section className="character__layout layout">
       <ErrorBoundary>
         {errorMessage}
         {spinner}
-        {content}
+        {
+          <CharList
+            newItemLoading={newItemLoading}
+            onNewCharLoading={onNewCharLoading}
+            data={heroes}
+            charEnded={charEnded}
+            selectedChar={selectedChar} />
+        }
       </ErrorBoundary>
       <ErrorBoundary>
         <CharInfo heroId={heroId}/>

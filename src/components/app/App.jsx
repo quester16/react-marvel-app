@@ -1,6 +1,8 @@
 import Header from '../header/header'
 import Character from '../character/character'
 import RandomChar from '../randomChar/randomChar'
+import ComicsHeader from "../comicsHeader/comicsHeader.jsx"
+import ComicsList from "../comicsList/comicsList.jsx";
 
 function App() {
 
@@ -12,8 +14,10 @@ function App() {
       <div className="container">
         <Header />
         <main>
-          <RandomChar />
-          <Character />
+          {/*<RandomChar />*/}
+          {/*<Character />*/}
+            <ComicsHeader />
+            <ComicsList/>
         </main>
       </div >
     </div >

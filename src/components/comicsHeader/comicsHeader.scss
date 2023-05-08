@@ -1,0 +1,30 @@
+.avengers__banner {
+  background: #232222;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100px;
+
+}
+
+.banner {
+  margin-bottom: 50px;
+
+  &__bg {
+    position: relative;
+    left: 45px;
+    margin-right: 87px;
+  }
+
+  &__alert {
+    font-size: 2.4rem;
+    line-height: 2.8rem;
+    color: #fff;
+
+  }
+
+  &__logo {
+    position: absolute;
+    right: 45px;
+  }
+}

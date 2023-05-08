@@ -1,96 +1,73 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import './randomChar.scss'
 
-import MarvelService from '../../services/marvelService'
+import useMarvelService from '../../services/marvelService'
 import Spinner from '../spiner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 
-class RandomChar extends Component {
+const RandomChar = () => {
 
-  state = {
-    char: {},
-    loading: true,
-    error: false
-  }
+  const [char, setChar] = useState({})
 
-  marvelService = new MarvelService();
+  const {loading, error, getCharacter, cleanError} = useMarvelService();
 
-  componentDidMount() {
-    this.updateChar()
-  }
-
-  onLoaded = (char) => {
-    this.setState({
-      char,
-      loading: false,
-      error: false
-    })
-  }
-
-  onLoading = () => {
-    this.setState({
-      loading: true
-    })
-  }
-
-  onError = () => {
-    console.log('error')
-    this.setState({
-      loading: false,
-      error: true
-    })
-  }
+  useEffect(() => {
+    updateChar()
+  }, [])
 
 
-  updateChar = () => {
+  const onLoaded = (char) => {
+    setChar(char)
+  };
+
+
+  const updateChar = () => {
+    cleanError()
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-    this.onLoading()
-    this.marvelService
-      .getCharacter(id)
-      .then(this.onLoaded)
-      .catch(this.onError)
+    getCharacter(id)
+      .then(onLoaded)
   }
 
-  render() {
 
-    const { char, loading, error } = this.state;
-    const errorMessage = error ? <ErrorMessage /> : null
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || errorMessage) ? <View char={char} /> : null;
+  const errorMessage = error ? <ErrorMessage /> : null
+  const spinner = loading ? <Spinner /> : null;
+  const content = !(loading || errorMessage) ? <View char={char} /> : null;
 
 
-    return (
-      <>
-        <section className="random-character">
-        <div className="character">
-          {errorMessage}
-          {spinner}
-          {content}
+  return (
+    <>
+      <section className="random-character">
+      <div className="character">
+        {errorMessage}
+        {spinner}
+        {content}
+        </div>
+        <div className="random__picker">
+          <div className="random__picker-head">
+            Random character for today! <br />
+            Do you want to get to know him better?
           </div>
-          <div className="random__picker">
-            <div className="random__picker-head">
-              Random character for today! <br />
-              Do you want to get to know him better?
-            </div>
-            <div className="random__picker-btn">
-              Or choose another one
-              <button className="btn" onClick={this.updateChar}>Try it</button>
-            </div>
+          <div className="random__picker-btn">
+            Or choose another one
+            <button className="btn" onClick={updateChar}>Try it</button>
           </div>
+        </div>
 
-        </section>
-      </>
-    );
-  }
+      </section>
+    </>
+  );
 }
 
 const View = ({ char }) => {
   const { name, descrip, thumbnail, detail, wiki } = char
 
-  const imgStyle = thumbnail.match('image_not_available') ? 'contain' : 'cover';
- 
+  let imgStyle;
+  try {
+    imgStyle = thumbnail.match('image_not_available') ? 'contain' : 'cover';
+  } catch (e){ console.log(e)}
+
   function onFailDescrip(descrip) {
     if (!descrip) {
       return 'There is no information about this hero :(';
