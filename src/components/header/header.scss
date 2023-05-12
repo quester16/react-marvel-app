@@ -40,10 +40,8 @@ header {
     span {
       cursor: pointer;
     }
-
-    span.active {
-      color: red;
-      text-decoration: underline;
-    }
+  }
+  .logo__link{
+    display: flex;
   }
 }

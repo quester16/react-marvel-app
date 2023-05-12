@@ -14,7 +14,7 @@ const RandomChar = () => {
   const {loading, error, getCharacter, cleanError} = useMarvelService();
 
   useEffect(() => {
-    updateChar()
+    updateChar();
   }, [])
 
 

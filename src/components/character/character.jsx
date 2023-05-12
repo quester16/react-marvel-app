@@ -19,7 +19,7 @@ const Character = () => {
   const {loading, error, getAllCharacters} = useMarvelService()
 
   useEffect(() => {
-    onRequest(offset, true)
+    onRequest(offset, true);
   }, [])
 
 
@@ -61,7 +61,7 @@ const Character = () => {
   }
 
   const onNewCharLoading = () => {
-    onRequest(offset)
+    onRequest(offset, false)
   }
 
 

@@ -44,3 +44,16 @@ body {
     cursor: not-allowed;
   }
 }
+.active {
+  color: red;
+  text-decoration: underline;
+}
+a{
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+
+  &:hover{
+    color: #9F0013;
+  }
+}
